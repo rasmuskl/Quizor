@@ -1,0 +1,90 @@
+﻿@page "/host"
+@inject CircuitTracker CircuitTracker
+@using Templahoot.Code
+@implements IDisposable
+
+<h1>Templa-hoot!</h1>
+
+<h3>Quiz</h3>
+@if (CircuitTracker.CurrentQuestion is null)
+{
+    <div>
+        No quiz active.
+        <button @onclick="OnStartQuiz">Start quiz</button>
+    </div>
+}
+else
+{
+    <div>
+        <h3>@CircuitTracker.CurrentQuestion.Text</h3>
+
+        @foreach (var answer in CircuitTracker.CurrentQuestion.Answers)
+        {
+            <div style=@("border: 1px solid #888; padding: 1rem 2rem; text-align: center;" + (CircuitTracker.QuestionReveal && answer.CorrectAnswer ? "background: green;" : ""))>@answer.Text</div>
+        }
+    </div>
+
+    @if (CircuitTracker.QuestionTimeOut.HasValue)
+    {
+        <h1>@Math.Round((CircuitTracker.QuestionTimeOut - DateTime.UtcNow).Value.TotalSeconds)</h1>
+    }
+    else
+    {
+        <h3>Ranking</h3>
+
+        @foreach (var (_, circuit) in CircuitTracker.Circuits.ToArray().OrderByDescending(x => x.Value.Points))
+        {
+            <div>@circuit.Name -  @circuit.Points</div>
+        }
+    }
+
+    <button @onclick="OnNextQuestion">Next question</button>
+}
+
+<h3>Join</h3>
+<img src="/images/qr-code.svg" style="max-width: 512px" />
+
+<h3>Attendees</h3>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 1rem">
+    @foreach (var circuit in CircuitTracker.Circuits.ToArray())
+    {
+        <div>@circuit.Value.Name (@circuit.Value.CircuitId)</div>
+    }
+</div>
+
+<h3>Reactions</h3>
+<div>
+    @foreach (var reaction in CircuitTracker.Reactions.ToArray())
+    {
+        <div>@reaction</div>
+    }
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        CircuitTracker.OnHostChange += OnHostChange;
+    }
+
+    private async Task OnHostChange()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        CircuitTracker.OnHostChange -= OnHostChange;
+    }
+
+    private async Task OnStartQuiz()
+    {
+        await CircuitTracker.PostCommand(new StartQuiz());
+    }
+
+    private async Task OnNextQuestion()
+    {
+        await CircuitTracker.PostCommand(new NextQuestion());
+    }
+
+
+}

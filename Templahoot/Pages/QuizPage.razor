@@ -1,0 +1,90 @@
+﻿@page "/quiz"
+@using Templahoot.Code
+@inject AttendeeService AttendeeService
+@inject CircuitTracker CircuitTracker
+@inject QuizInfo Quiz
+@implements IDisposable
+
+<h1>Templa-hoot!</h1>
+
+@if (CurrentQuestion is not null)
+{
+    var answeredAnswer = CircuitTracker.GetAnsweredAnswer(AttendeeService.CircuitId);
+
+    <div>
+        <h3>@CurrentQuestion.Text</h3>
+
+        @foreach (var answer in CurrentQuestion.Answers)
+        {
+            var currentAnswer = answer;
+
+            var extraStyle = "";
+
+            if (CircuitTracker.QuestionTimeOut is null && answer.CorrectAnswer)
+            {
+                extraStyle = "background: #444";
+            }
+
+            if (answeredAnswer == answer)
+            {
+                extraStyle = "background: blue";
+
+                if (CircuitTracker.QuestionTimeOut is null)
+                {
+                    if (answer.CorrectAnswer)
+                    {
+                        extraStyle = "background: green";
+                    }
+                    else
+                    {
+                        extraStyle = "background: red";
+                    }
+                }
+            }
+
+            <div style=@("border: 1px solid #888; padding: 1rem 2rem; text-align: center;" + extraStyle) @onclick=@(() => OnAnswerClicked(currentAnswer))>@answer.Text</div>
+        }
+    </div>
+}
+
+<div style="display: flex; flex-direction: column; align-items: center; gap: 1rem">
+
+    <button @onclick="OnHeartClick">&lt;3</button>
+
+</div>
+
+@if (CircuitTracker.QuestionTimeOut is null)
+{
+    <p>You have @CircuitTracker.GetPoints(AttendeeService.CircuitId) points.</p>
+}
+
+<p>Attending as @AttendeeService.Name</p>
+
+@code {
+    private QuestionInfo? CurrentQuestion => CircuitTracker.CurrentQuestion;
+
+    private async Task OnHeartClick()
+    {
+        await CircuitTracker.PostCommand(new CircuitReactHeart(AttendeeService.CircuitId));
+    }
+
+    protected override void OnInitialized()
+    {
+        CircuitTracker.OnClientChange += OnClientChange;
+    }
+
+    private async Task OnClientChange()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        CircuitTracker.OnClientChange -= OnClientChange;
+    }
+
+    private async Task OnAnswerClicked(AnswerInfo answer)
+    {
+        await CircuitTracker.PostCommand(new AnswerSubmitted(AttendeeService.CircuitId, answer));
+    }
+}
