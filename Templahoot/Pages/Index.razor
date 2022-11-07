@@ -1,8 +1,21 @@
 ﻿@page "/"
+@inject NavigationManager NavigationManager
 
 <h1>Templa-hoot!</h1>
 
 <div class="flex" style="flex-direction: column; align-items: center; gap: 1rem">
-    <NavLink href="/host">Host</NavLink>
     <NavLink href="/quiz">Quiz</NavLink>
 </div>
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        NavigationManager.NavigateTo("/quiz");
+    }
+}

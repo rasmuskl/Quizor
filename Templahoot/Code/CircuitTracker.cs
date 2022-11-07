@@ -101,13 +101,13 @@ public class CircuitTracker : BackgroundService
                 case StartQuiz:
                 {
                     ShowQuestion(0);
-                    OnClientChange?.Invoke();
+                    OnClientChange?.Invoke(null);
                     break;
                 }
                 case NextQuestion:
                 {
                     ShowQuestion(QuestionIndex.GetValueOrDefault() + 1);
-                    OnClientChange?.Invoke();
+                    OnClientChange?.Invoke(null);
                     break;
                 }
                 case TimerElapsed:
@@ -119,7 +119,15 @@ public class CircuitTracker : BackgroundService
                     QuestionTimeOut = null;
                     QuestionTimer.Stop();
                     QuestionReveal = true;
-                    OnClientChange?.Invoke();
+                    OnClientChange?.Invoke(null);
+                    break;
+                }
+                case NameSet nameSet:
+                {
+                    if (Circuits.TryGetValue(nameSet.CircuitId, out var circuitInfo))
+                    {
+                        Circuits[nameSet.CircuitId] = circuitInfo with { Name = nameSet.Name };
+                    }
                     break;
                 }
                 case AnswerSubmitted answerSubmitted:
@@ -157,7 +165,7 @@ public class CircuitTracker : BackgroundService
                             LastAnswer = answerSubmitted.Answer,
                         };
 
-                        OnClientChange?.Invoke();
+                        OnClientChange?.Invoke(answerSubmitted.CircuitId);
                     }
                     break;
                 }
@@ -176,7 +184,7 @@ public class CircuitTracker : BackgroundService
     }
 
     public event Func<Task>? OnHostChange;
-    public event Func<Task>? OnClientChange;
+    public event Func<string?, Task>? OnClientChange;
 
     public async Task PostCommand(CircuitCommand command)
     {
@@ -185,6 +193,11 @@ public class CircuitTracker : BackgroundService
 
     public int GetPoints(string circuitId)
     {
+        if (string.IsNullOrWhiteSpace(circuitId))
+        {
+            return 0;
+        }
+
         if (Circuits.TryGetValue(circuitId, out var circuitInfo))
         {
             return circuitInfo.Points;
@@ -209,3 +222,4 @@ public record NextQuestion() : CircuitCommand;
 public record TimerElapsed() : CircuitCommand;
 public record QuestionTimerElapsed() : CircuitCommand;
 public record AnswerSubmitted(string CircuitId, AnswerInfo Answer) : CircuitCommand;
+public record NameSet(string CircuitId, string Name) : CircuitCommand;

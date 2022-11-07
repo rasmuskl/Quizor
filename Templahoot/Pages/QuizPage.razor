@@ -7,6 +7,16 @@
 
 <h1>Templa-hoot!</h1>
 
+@if (!AttendeeService.IsNameSet)
+{
+    <div>
+        Enter your name:
+        <input type="text" class="bg-gray-800" @bind-value="@ProposedName" @onkeyup="OnKeyUp" />
+        <button @onclick="OnSetNameClick">Set</button>
+    </div>
+}
+
+
 @if (CurrentQuestion is not null)
 {
     var answeredAnswer = CircuitTracker.GetAnsweredAnswer(AttendeeService.CircuitId);
@@ -61,6 +71,7 @@
 <p>Attending as @AttendeeService.Name</p>
 
 @code {
+    private string ProposedName { get; set; }
     private QuestionInfo? CurrentQuestion => CircuitTracker.CurrentQuestion;
 
     private async Task OnHeartClick()
@@ -73,9 +84,12 @@
         CircuitTracker.OnClientChange += OnClientChange;
     }
 
-    private async Task OnClientChange()
+    private async Task OnClientChange(string? circuitId)
     {
-        await InvokeAsync(StateHasChanged);
+        if (circuitId == null || circuitId == AttendeeService.CircuitId)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     public void Dispose()
@@ -86,5 +100,32 @@
     private async Task OnAnswerClicked(AnswerInfo answer)
     {
         await CircuitTracker.PostCommand(new AnswerSubmitted(AttendeeService.CircuitId, answer));
+    }
+
+    private async Task OnKeyUp(KeyboardEventArgs arg)
+    {
+        if (arg.Key == "Enter")
+        {
+            await SetName(ProposedName);
+        }
+    }
+
+    private async Task OnSetNameClick()
+    {
+        await SetName(ProposedName);
+    }
+
+    private async Task SetName(string proposedName)
+    {
+        proposedName = proposedName.Trim();
+
+        if (proposedName.Length < 3)
+        {
+            return;
+        }
+
+        AttendeeService.Name = proposedName;
+        AttendeeService.IsNameSet = true;
+        await CircuitTracker.PostCommand(new NameSet(AttendeeService.CircuitId, proposedName));
     }
 }

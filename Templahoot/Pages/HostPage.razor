@@ -45,10 +45,10 @@ else
 <img src="/images/qr-code.svg" style="max-width: 512px" />
 
 <h3>Attendees</h3>
-<div style="display: flex; flex-direction: column; align-items: center; gap: 1rem">
+<div style="display: flex; flex-direction: column; gap: 1rem">
     @foreach (var circuit in CircuitTracker.Circuits.ToArray())
     {
-        <div>@circuit.Value.Name (@circuit.Value.CircuitId)</div>
+        <div>@circuit.Value.Name</div>
     }
 </div>
 
