@@ -36,9 +36,8 @@
         }
         else
         {
-            <h3 class="font-mono text-xl text-center text-slate-200 bg-slate-900 rounded-md p-4">@CircuitTracker.CurrentQuestion.Text</h3>
+            <h3 class="font-mono text-xl text-center text-slate-200 bg-slate-900 rounded-md p-4">@((MarkupString)CircuitTracker.CurrentQuestion.Text)</h3>
             <ul class="space-4 grid md:grid-cols-2 grid-cols-1 gap-4">
-
                 @foreach (var answer in CircuitTracker.CurrentQuestion.Answers)
                 {
                     var extraStyle = CircuitTracker.QuestionReveal && answer.CorrectAnswer ? "bg-green-500 opacity-100 scale-105 border-green-900" : "";
