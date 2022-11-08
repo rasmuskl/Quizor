@@ -2,7 +2,7 @@
 
 public class QuizInfo
 {
-    public QuestionInfo[] Questions { get;  } = new[]
+    public QuestionInfo[] Questions3 { get;  } = new[]
     {
         new QuestionInfo("What is the result?<br/><pre>this is some random code that is long</pre>", new AnswerInfo[]
         {
@@ -34,7 +34,7 @@ public class QuizInfo
         }),
     };
 
-    public QuestionInfo[] Questions2 { get; } = new[]
+    public QuestionInfo[] Questions { get; } = new[]
     {
         new QuestionInfo("What is the result?<br/><pre>2 + 2</pre>", new AnswerInfo[]
         {
@@ -124,7 +124,7 @@ public class QuizInfo
             new("\"[object Object]\""),
         }),
 
-        new QuestionInfo("What is the result?<br/><pre><!-- 42</pre>", new AnswerInfo[]
+        new QuestionInfo("What is the result?<br/><pre>&lt;!-- 42</pre>", new AnswerInfo[]
         {
             new("undefined", true),
             new("42"),

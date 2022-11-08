@@ -48,7 +48,7 @@
                 <p class="relative text-center text-6xl text-slate-200">@Math.Round((CircuitTracker.QuestionTimeOut - DateTime.UtcNow).Value.TotalSeconds)</p>
             </div>
         }
-        else
+        else if(CircuitTracker.QuestionIndex <= CircuitTracker.QuestionMaxIndex)
         {
             <button class="bg-slate-300 p-2 rounded-md text-slate-800 text-lg hover:bg-slate-200 active:bg-slate-400" @onclick="OnNextQuestion">Next question</button>
         }

@@ -17,6 +17,8 @@ public class CircuitTracker : BackgroundService
     public DateTime? QuestionTimeOut;
     public bool QuestionReveal;
 
+    public int QuestionMaxIndex => _quiz.Questions.Length - 1;
+
     public CircuitTracker(QuizInfo quiz)
     {
         _quiz = quiz;
