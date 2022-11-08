@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Threading.Channels;
 using Timer = System.Timers.Timer;
 
@@ -8,8 +9,8 @@ public class CircuitTracker : BackgroundService
     private readonly Channel<CircuitCommand> _commandChannel = Channel.CreateUnbounded<CircuitCommand>();
     private readonly QuizInfo _quiz;
 
-    public Dictionary<string, CircuitInfo> Circuits = new();
-    public Queue<AttendeeReaction> Reactions = new();
+    public ConcurrentDictionary<string, CircuitInfo> Circuits = new();
+    public ConcurrentQueue<AttendeeReaction> Reactions = new();
     public int? QuestionIndex;
     public QuestionInfo? CurrentQuestion => QuestionIndex.HasValue ? _quiz.Questions[QuestionIndex.Value] : null;
     public Timer QuestionTimer = new(1000);
@@ -60,9 +61,8 @@ public class CircuitTracker : BackgroundService
                 }
                 case CircuitClosed circuitClosed:
                 {
-                    if (Circuits.TryGetValue(circuitClosed.CircuitId, out var circuit))
+                    if (Circuits.TryRemove(circuitClosed.CircuitId, out _))
                     {
-                        Circuits.Remove(circuit.CircuitId);
                         OnHostChange?.Invoke();
                     }
                     break;
@@ -99,7 +99,7 @@ public class CircuitTracker : BackgroundService
 
                         while (Reactions.Count > 20)
                         {
-                            Reactions.Dequeue();
+                            Reactions.TryDequeue(out _);
                         }
 
                         OnHostChange?.Invoke();
