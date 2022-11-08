@@ -164,7 +164,7 @@ public class CircuitTracker : BackgroundService
                             // https://support.kahoot.com/hc/en-us/articles/115002303908-How-points-work
                             var now = DateTime.UtcNow;
                             var responseTime = now - questionTimeOut.Value.AddSeconds(-20);
-                            var dividedValue = 20 / Math.Max(0.01, responseTime.TotalSeconds);
+                            var dividedValue = responseTime.TotalSeconds / 20;
                             var dividedAgain = dividedValue / 2;
                             var subtracted = 1 - dividedAgain;
                             var multiplied = subtracted * 1000;
