@@ -56,7 +56,7 @@ else
 <div>
     @foreach (var reaction in CircuitTracker.Reactions.ToArray())
     {
-        <div>@reaction</div>
+        <div>@reaction.Name: <img src="@GetImage(reaction.Type)"/></div>
     }
 </div>
 
@@ -87,4 +87,15 @@ else
     }
 
 
+    private string GetImage(ReactionType reactionType)
+    {
+        return reactionType switch
+        {
+            ReactionType.Heart => "/images/heart.png",
+            ReactionType.Joy => "/images/joy.png",
+            ReactionType.Explode => "/images/explode.png",
+            ReactionType.Think => "/images/think.png",
+            ReactionType.Invader => "/images/invader.png",
+        };
+    }
 }

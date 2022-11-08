@@ -1,18 +1,16 @@
-using System.Runtime.CompilerServices;
 using System.Threading.Channels;
-using System.Timers;
 using Timer = System.Timers.Timer;
 
 namespace Templahoot.Code;
 
 public class CircuitTracker : BackgroundService
 {
-    private readonly QuizInfo _quiz;
     private readonly Channel<CircuitCommand> _commandChannel = Channel.CreateUnbounded<CircuitCommand>();
+    private readonly QuizInfo _quiz;
 
     public Dictionary<string, CircuitInfo> Circuits = new();
-    public List<string> Reactions = new();
-    public int? QuestionIndex = null;
+    public Queue<AttendeeReaction> Reactions = new();
+    public int? QuestionIndex;
     public QuestionInfo? CurrentQuestion => QuestionIndex.HasValue ? _quiz.Questions[QuestionIndex.Value] : null;
     public Timer QuestionTimer = new(1000);
     public DateTime? QuestionTimeOut;
@@ -21,7 +19,6 @@ public class CircuitTracker : BackgroundService
     public CircuitTracker(QuizInfo quiz)
     {
         _quiz = quiz;
-
         QuestionTimer.AutoReset = true;
         QuestionTimer.Elapsed += (o, e) => OnTimerElapsed().Wait();
     }
@@ -58,6 +55,7 @@ public class CircuitTracker : BackgroundService
                     {
                         Circuits.TryAdd(circuitOpened.CircuitId, new CircuitInfo(circuitOpened.CircuitId, circuitOpened.Name, CircuitState.Connected, 0, -1, null));
                     }
+                    OnHostChange?.Invoke();
                     break;
                 }
                 case CircuitClosed circuitClosed:
@@ -65,6 +63,7 @@ public class CircuitTracker : BackgroundService
                     if (Circuits.TryGetValue(circuitClosed.CircuitId, out var circuit))
                     {
                         Circuits.Remove(circuit.CircuitId);
+                        OnHostChange?.Invoke();
                     }
                     break;
                 }
@@ -76,6 +75,7 @@ public class CircuitTracker : BackgroundService
                         {
                             State = CircuitState.Disconnected
                         };
+                        OnHostChange?.Invoke();
                     }
                     break;
                 }
@@ -87,14 +87,22 @@ public class CircuitTracker : BackgroundService
                         {
                             State = CircuitState.Connected
                         };
+                        OnHostChange?.Invoke();
                     }
                     break;
                 }
-                case CircuitReactHeart circuitReact:
+                case CircuitReact circuitReact:
                 {
                     if (Circuits.TryGetValue(circuitReact.CircuitId, out var circuit))
                     {
-                        Reactions.Add($"{circuit.Name}: <3");
+                        Reactions.Enqueue(new AttendeeReaction(circuit.Name, circuitReact.Type));
+
+                        while (Reactions.Count > 20)
+                        {
+                            Reactions.Dequeue();
+                        }
+
+                        OnHostChange?.Invoke();
                     }
                     break;
                 }
@@ -102,16 +110,19 @@ public class CircuitTracker : BackgroundService
                 {
                     ShowQuestion(0);
                     OnClientChange?.Invoke(null);
+                    OnHostChange?.Invoke();
                     break;
                 }
                 case NextQuestion:
                 {
                     ShowQuestion(QuestionIndex.GetValueOrDefault() + 1);
                     OnClientChange?.Invoke(null);
+                    OnHostChange?.Invoke();
                     break;
                 }
                 case TimerElapsed:
                 {
+                    OnHostChange?.Invoke();
                     break;
                 }
                 case QuestionTimerElapsed:
@@ -120,6 +131,7 @@ public class CircuitTracker : BackgroundService
                     QuestionTimer.Stop();
                     QuestionReveal = true;
                     OnClientChange?.Invoke(null);
+                    OnHostChange?.Invoke();
                     break;
                 }
                 case NameSet nameSet:
@@ -128,6 +140,7 @@ public class CircuitTracker : BackgroundService
                     {
                         Circuits[nameSet.CircuitId] = circuitInfo with { Name = nameSet.Name };
                     }
+                    OnHostChange?.Invoke();
                     break;
                 }
                 case AnswerSubmitted answerSubmitted:
@@ -170,8 +183,6 @@ public class CircuitTracker : BackgroundService
                     break;
                 }
             }
-
-            OnHostChange?.Invoke();
         }
     }
 
@@ -223,3 +234,15 @@ public record TimerElapsed() : CircuitCommand;
 public record QuestionTimerElapsed() : CircuitCommand;
 public record AnswerSubmitted(string CircuitId, AnswerInfo Answer) : CircuitCommand;
 public record NameSet(string CircuitId, string Name) : CircuitCommand;
+
+
+public record AttendeeReaction(string Name, ReactionType Type);
+
+public enum ReactionType
+{
+    Heart,
+    Joy,
+    Explode,
+    Think,
+    Invader,
+}

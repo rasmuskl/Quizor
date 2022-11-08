@@ -16,7 +16,6 @@
     </div>
 }
 
-
 @if (CurrentQuestion is not null)
 {
     var answeredAnswer = CircuitTracker.GetAnsweredAnswer(AttendeeService.CircuitId);
@@ -57,10 +56,12 @@
     </div>
 }
 
-<div style="display: flex; flex-direction: column; align-items: center; gap: 1rem">
-
-    <button @onclick="OnHeartClick">&lt;3</button>
-
+<div style="display: flex; gap: 1rem">
+    <a @onclick="() => OnReact(ReactionType.Heart)"><img src="/images/heart.png" /></a>
+    <a @onclick="() => OnReact(ReactionType.Joy)"><img src="/images/joy.png" /></a>
+    <a @onclick="() => OnReact(ReactionType.Explode)"><img src="/images/explode.png" /></a>
+    <a @onclick="() => OnReact(ReactionType.Think)"><img src="/images/think.png" /></a>
+    <a @onclick="() => OnReact(ReactionType.Invader)"><img src="/images/invader.png" /></a>
 </div>
 
 @if (CircuitTracker.QuestionTimeOut is null)
@@ -74,9 +75,9 @@
     private string ProposedName { get; set; }
     private QuestionInfo? CurrentQuestion => CircuitTracker.CurrentQuestion;
 
-    private async Task OnHeartClick()
+    private async Task OnReact(ReactionType reactionType)
     {
-        await CircuitTracker.PostCommand(new CircuitReactHeart(AttendeeService.CircuitId));
+        await CircuitTracker.PostCommand(new CircuitReact(AttendeeService.CircuitId, reactionType));
     }
 
     protected override void OnInitialized()
@@ -115,9 +116,9 @@
         await SetName(ProposedName);
     }
 
-    private async Task SetName(string proposedName)
+    private async Task SetName(string? proposedName)
     {
-        proposedName = proposedName.Trim();
+        proposedName = proposedName?.Trim() ?? "";
 
         if (proposedName.Length < 3)
         {
