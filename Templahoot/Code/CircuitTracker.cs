@@ -99,7 +99,7 @@ public class CircuitTracker : BackgroundService
                     {
                         Reactions.Enqueue(new AttendeeReaction(circuit.Name, circuitReact.Type));
 
-                        // Make sure we dont have an infinite loop
+                        // Make sure we don't have an infinite loop
                         var breaker = 0;
 
                         while (Reactions.Count > 20 && breaker < 50)
