@@ -10,7 +10,7 @@ public class CircuitTracker : BackgroundService
     private readonly QuizInfo _quiz;
 
     public ConcurrentDictionary<string, CircuitInfo> Circuits = new();
-    public ConcurrentStack<AttendeeReaction> Reactions = new();
+    public ConcurrentQueue<AttendeeReaction> Reactions = new();
     public int? QuestionIndex;
     public QuestionInfo? CurrentQuestion => QuestionIndex.HasValue ? _quiz.Questions[QuestionIndex.Value] : null;
     public Timer QuestionTimer = new(1000);
@@ -95,7 +95,16 @@ public class CircuitTracker : BackgroundService
                 {
                     if (Circuits.TryGetValue(circuitReact.CircuitId, out var circuit))
                     {
-                        Reactions.Push(new AttendeeReaction(circuit.Name, circuitReact.Type));
+                        Reactions.Enqueue(new AttendeeReaction(circuit.Name, circuitReact.Type));
+
+                        // Make sure we dont have an infinite loop
+                        var breaker = 0;
+
+                        while (Reactions.Count > 20 && breaker < 50)
+                        {
+                            Reactions.TryDequeue(out _);
+                            breaker++;
+                        }
 
                         OnHostChange?.Invoke();
                     }
