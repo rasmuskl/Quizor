@@ -12,13 +12,13 @@
     var blur = !CircuitTracker.QuestionReveal && CircuitTracker.CurrentQuestion is not null ? "blur-md" : "";
 }
 
-<div class="grid grid-flow-row-dense grid-cols-5 gap-8">
-    <div class=@($"col-span-1 flex flex-col gap-6 {blur}")>
+<div class="grid grid-flow-row-dense grid-cols-7 gap-8">
+    <div class=@($"col-span-2 flex flex-col gap-6 {blur}")>
         <div class="flex flex-col gap-1 rounded-md border border-slate-500 p-4 h-96">
             <h3 class="text-xl text-slate-300 text-center">Leaderboard</h3>
             @foreach (var (_, circuit) in CircuitTracker.Circuits.ToArray().OrderByDescending(x => x.Value.Points).Take(10))
             {
-                <div class="text-md text-slate-200">@($"{circuit.Name} - {circuit.Points}p")</div>
+                <div class="text-md text-slate-200 text-ellipsis overflow-hidden whitespace-nowrap">@($"{circuit.Points}p - {circuit.Name}")</div>
             }
         </div>
     </div>
@@ -54,12 +54,15 @@
 
     </div>
 
-    <div class="col-span-1 flex flex-col gap-6">
+    <div class="col-span-2 flex flex-col gap-6">
         <div class="flex flex-col gap-1 rounded-md border border-slate-500 p-4 overflow-hidden h-96">
             <h3 class="text-xl text-slate-300 text-center">Reactions</h3>
             @foreach (var reaction in CircuitTracker.Reactions.ToArray())
             {
-                <div class="flex flex-row items-center justify-between text-slate-200 text-md">@reaction.Name: <img src="@GetImage(reaction.Type)"/></div>
+                <div class="flex flex-row items-center justify-between text-slate-200 text-md">
+                    <span class="text-ellipsis overflow-hidden whitespace-nowrap">@reaction.Name: </span>
+                    <img class="h-6" src="@GetImage(reaction.Type)"/>
+                </div>
             }
         </div>
     </div>
