@@ -4,7 +4,7 @@ public class QuizInfo
 {
     public QuestionInfo[] Questions { get;  } = new[]
     {
-        new QuestionInfo("What is the result?<br/><pre>this is some random code that is long</pre>", new AnswerInfo[]
+        new QuestionInfo("What is the result?<br/>this is some random code that is long", new AnswerInfo[]
         {
             new("1"),
             new("2"),
