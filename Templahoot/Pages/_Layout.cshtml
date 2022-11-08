@@ -35,14 +35,17 @@
     </div>
 
     <div id="components-reconnect-modal">
-        <div class="connecting">Reconnecting...</div>
-        <div class="failed">
-            <div>Connection lost.</div>
-            <button onclick="window.Blazor.reconnect()">Reconnect</button>
+        <div class="connecting flex flex-col gap-2">
+            Reconnecting...
+            <button class="bg-slate-300 p-2 rounded-lg text-slate-800 hover:bg-slate-200 active:bg-slate-400" onclick="window.Blazor.reconnect()">Reconnect</button>
         </div>
-        <div class="rejected">
+        <div class="failed flex flex-col gap-2">
+            <div>Connection lost.</div>
+            <button class="bg-slate-300 p-2 rounded-lg text-slate-800 hover:bg-slate-200 active:bg-slate-400" onclick="window.Blazor.reconnect()">Reconnect</button>
+        </div>
+        <div class="rejected flex flex-col gap-2">
             <div>Connection rejected.</div>
-            <button onclick="window.location.reload()">Reload</button>
+            <button class="bg-slate-300 p-2 rounded-lg text-slate-800 hover:bg-slate-200 active:bg-slate-400" onclick="window.location.reload()">Reload</button>
         </div>
     </div>
 

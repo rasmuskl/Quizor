@@ -57,6 +57,7 @@ a, .btn-link {
     display: none;
     justify-items: center;
     flex-direction: column;
+    color: #fff;
 }
 
 #components-reconnect-modal.components-reconnect-show {
