@@ -217,8 +217,13 @@ public class CircuitTracker : BackgroundService
         return 0;
     }
 
-    public AnswerInfo? GetAnsweredAnswer(string circuitId)
+    public AnswerInfo? GetAnsweredAnswer(string? circuitId)
     {
+        if (string.IsNullOrWhiteSpace(circuitId))
+        {
+            return null;
+        }
+
         if (Circuits.TryGetValue(circuitId, out var circuitInfo) && circuitInfo.LastQuestionAnswered == QuestionIndex)
         {
             return circuitInfo.LastAnswer;
