@@ -13,44 +13,46 @@
 }
 
 <div class="grid grid-flow-row-dense grid-cols-7 gap-8">
-    <div class=@($"col-span-2 flex flex-col gap-6 {blur}")>
-        <div class="flex flex-col gap-1 rounded-md border border-slate-500 p-4 h-96">
-            <h3 class="text-xl text-slate-300 text-center">Leaderboard</h3>
-            @foreach (var (_, circuit) in CircuitTracker.Circuits.ToArray().OrderByDescending(x => x.Value.Points).Take(10))
-            {
-                <div class="text-md text-slate-200 text-ellipsis overflow-hidden whitespace-nowrap">@($"{circuit.Points}p - {circuit.Name}")</div>
-            }
-        </div>
-    </div>
-
-    <div class="col-span-3 flex flex-col gap-4">
-
-        @if (CircuitTracker.CurrentQuestion is null)
+<div class=@($"col-span-2 flex flex-col gap-6 {blur}")>
+    <div class="flex flex-col gap-1 rounded-md border border-slate-500 p-4 h-96">
+        <h3 class="text-xl text-slate-300 text-center">Leaderboard</h3>
+        @foreach (var (_, circuit) in CircuitTracker.Circuits.ToArray().OrderByDescending(x => x.Value.Points).Take(10))
         {
-            <h2 class="font-mono text-xl text-center text-slate-200 bg-slate-900 rounded-md p-4">No quiz active.</h2>
-            <button class="bg-slate-300 p-2 rounded-md text-slate-800 text-lg hover:bg-slate-200 active:bg-slate-400" @onclick="OnStartQuiz">Start quiz</button>
+            <div class="text-md text-slate-200 text-ellipsis overflow-hidden whitespace-nowrap">@($"{circuit.Points}p - {circuit.Name}")</div>
+        }
+    </div>
+</div>
+
+<div class="col-span-3 flex flex-col gap-4">
+
+    @if (CircuitTracker.CurrentQuestion is null)
+    {
+        <h2 class="font-mono text-xl text-center text-slate-200 bg-slate-900 rounded-md p-4">No quiz active.</h2>
+        <button class="bg-slate-300 p-2 rounded-md text-slate-800 text-lg hover:bg-slate-200 active:bg-slate-400" @onclick="OnStartQuiz">Start quiz</button>
+    }
+    else
+    {
+        <h3 class="font-mono text-xl text-center text-slate-200 bg-slate-900 rounded-md p-4">@((MarkupString) CircuitTracker.CurrentQuestion.Text)</h3>
+        <ul class="space-4 grid md:grid-cols-2 grid-cols-1 gap-4">
+            @foreach (var answer in CircuitTracker.CurrentQuestion.Answers)
+            {
+                var extraStyle = CircuitTracker.QuestionReveal && answer.CorrectAnswer ? "bg-green-500 opacity-100 scale-105 border-green-900" : "";
+                <li class=@("flex items-center justify-center text-2xl grow bg-sky-500 h-24 border-4 border-sky-900 rounded-2xl opacity-80 hover:opacity-100 hover:scale-105 duration-100 cursor-pointer " + extraStyle)>@answer.Text</li>
+            }
+        </ul>
+
+        @if (CircuitTracker.QuestionTimeOut.HasValue)
+        {
+            <div class="flex items-center justify-center">
+                <span class="absolute animate-ping rounded-full bg-rose-100 w-12 h-12"></span>
+                <p class="relative text-center text-6xl text-rose-400">@Math.Round((CircuitTracker.QuestionTimeOut - DateTime.UtcNow).Value.TotalSeconds)</p>
+            </div>
         }
         else
         {
-            <h3 class="font-mono text-xl text-center text-slate-200 bg-slate-900 rounded-md p-4">@((MarkupString)CircuitTracker.CurrentQuestion.Text)</h3>
-            <ul class="space-4 grid md:grid-cols-2 grid-cols-1 gap-4">
-                @foreach (var answer in CircuitTracker.CurrentQuestion.Answers)
-                {
-                    var extraStyle = CircuitTracker.QuestionReveal && answer.CorrectAnswer ? "bg-green-500 opacity-100 scale-105 border-green-900" : "";
-                    <li class=@("flex items-center justify-center text-2xl grow bg-sky-500 h-24 border-4 border-sky-900 rounded-2xl opacity-80 hover:opacity-100 hover:scale-105 duration-100 cursor-pointer " + extraStyle)>@answer.Text</li>
-                }
-            </ul>
-
-            @if (CircuitTracker.QuestionTimeOut.HasValue)
-            {
-                <p class="text-center text-6xl text-rose-400">@Math.Round((CircuitTracker.QuestionTimeOut - DateTime.UtcNow).Value.TotalSeconds)</p>
-            }
-            else
-            {
-                <button class="bg-slate-300 p-2 rounded-md text-slate-800 text-lg hover:bg-slate-200 active:bg-slate-400" @onclick="OnNextQuestion">Next question</button>
-            }
+            <button class="bg-slate-300 p-2 rounded-md text-slate-800 text-lg hover:bg-slate-200 active:bg-slate-400" @onclick="OnNextQuestion">Next question</button>
         }
-
+    }
 
     </div>
 
