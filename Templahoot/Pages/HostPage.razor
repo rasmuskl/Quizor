@@ -44,8 +44,8 @@
         @if (CircuitTracker.QuestionTimeOut.HasValue)
         {
             <div class="flex items-center justify-center">
-                <span class="absolute animate-ping rounded-full bg-rose-100 w-12 h-12"></span>
-                <p class="relative text-center text-6xl text-rose-400">@Math.Round((CircuitTracker.QuestionTimeOut - DateTime.UtcNow).Value.TotalSeconds)</p>
+                <span class="absolute animate-ping rounded-full bg-rose-300 w-12 h-12"></span>
+                <p class="relative text-center text-6xl text-slate-200">@Math.Round((CircuitTracker.QuestionTimeOut - DateTime.UtcNow).Value.TotalSeconds)</p>
             </div>
         }
         else
