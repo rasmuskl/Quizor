@@ -20,7 +20,7 @@
     {
         var answeredAnswer = CircuitTracker.GetAnsweredAnswer(AttendeeService.CircuitId);
 
-        <h3 class="font-mono text-lg text-center text-slate-200 bg-slate-900 rounded-md p-4">@((MarkupString)CurrentQuestion.Text)</h3>
+        <h3 class="font-mono text-md text-center text-slate-200 bg-slate-900 rounded-md p-4">@((MarkupString)CurrentQuestion.Text)</h3>
 
         <ul class="grid md:grid-cols-2 grid-cols-1 gap-2">
 
@@ -52,7 +52,7 @@
                     }
                 }
 
-                <li class=@("flex items-center justify-center text-2xl grow bg-sky-500 h-16 border-4 border-sky-900 rounded-2xl opacity-80 hover:opacity-100 hover:scale-105 duration-100 cursor-pointer " + extraStyle) @onclick=@(() => OnAnswerClicked(currentAnswer))>@answer.Text</li>
+                <li class=@("flex items-center justify-center text-lg grow bg-sky-500 h-16 border-4 border-sky-900 rounded-2xl opacity-80 hover:opacity-100 hover:scale-105 duration-100 cursor-pointer " + extraStyle) @onclick=@(() => OnAnswerClicked(currentAnswer))>@answer.Text</li>
             }
         </ul>
     }
