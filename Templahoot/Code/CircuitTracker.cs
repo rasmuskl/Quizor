@@ -154,7 +154,7 @@ public class CircuitTracker : BackgroundService
                         }
 
                         var points = 0;
-                        if (answerSubmitted.Answer.CorrectAnswer)
+                        if (answerSubmitted.Answer.CorrectAnswer && CurrentQuestion?.NoPoints != true)
                         {
                             // https://support.kahoot.com/hc/en-us/articles/115002303908-How-points-work
                             var now = DateTime.UtcNow;

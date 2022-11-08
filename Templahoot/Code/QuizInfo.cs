@@ -42,7 +42,7 @@ public class QuizInfo
             new("4", true),
             new("5"),
             new("SyntaxError"),
-        }),
+        }, true),
 
         new QuestionInfo("What is the result?<br/><pre>1 + 2 + \"3\"</pre>", new AnswerInfo[]
         {
@@ -150,6 +150,6 @@ public class QuizInfo
     };
 }
 
-public record QuestionInfo(string Text, AnswerInfo[] Answers);
+public record QuestionInfo(string Text, AnswerInfo[] Answers, bool NoPoints = false);
 
 public record AnswerInfo(string Text, bool CorrectAnswer = false);
