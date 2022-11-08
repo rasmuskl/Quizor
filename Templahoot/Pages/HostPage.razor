@@ -31,12 +31,12 @@
 
         @if (CircuitTracker.CurrentQuestion is null)
         {
-            <h2 class="text-2xl text-center text-slate-100">No quiz active.</h2>
+            <h2 class="font-mono text-xl text-center text-slate-200 bg-slate-900 rounded-md p-4">No quiz active.</h2>
             <button class="bg-slate-300 p-2 rounded-md text-slate-800 text-lg hover:bg-slate-200 active:bg-slate-400" @onclick="OnStartQuiz">Start quiz</button>
         }
         else
         {
-            <h3 class="text-2xl text-center text-slate-100 p-4 rounded-md border-4 border-slate-200">@CircuitTracker.CurrentQuestion.Text</h3>
+            <h3 class="font-mono text-xl text-center text-slate-200 bg-slate-900 rounded-md p-4">@CircuitTracker.CurrentQuestion.Text</h3>
             <ul class="space-4 grid md:grid-cols-2 grid-cols-1 gap-4">
 
                 @foreach (var answer in CircuitTracker.CurrentQuestion.Answers)
