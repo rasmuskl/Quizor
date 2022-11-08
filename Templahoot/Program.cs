@@ -11,7 +11,11 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddRazorPages();
-        builder.Services.AddServerSideBlazor();
+        builder.Services.AddServerSideBlazor(options =>
+        {
+            options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromHours(1);
+            options.DisconnectedCircuitMaxRetained = 200;
+        });
         builder.Services.AddScoped<AttendeeService>();
         builder.Services.AddScoped<CircuitHandler, TrackingCircuitHandler>();
         builder.Services.AddHostedSingleton<CircuitTracker>();

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Threading.Channels;
 using Timer = System.Timers.Timer;
 
@@ -8,8 +9,8 @@ public class CircuitTracker : BackgroundService
     private readonly Channel<CircuitCommand> _commandChannel = Channel.CreateUnbounded<CircuitCommand>();
     private readonly QuizInfo _quiz;
 
-    public Dictionary<string, CircuitInfo> Circuits = new();
-    public Queue<AttendeeReaction> Reactions = new();
+    public ConcurrentDictionary<string, CircuitInfo> Circuits = new();
+    public ConcurrentQueue<AttendeeReaction> Reactions = new();
     public int? QuestionIndex;
     public QuestionInfo? CurrentQuestion => QuestionIndex.HasValue ? _quiz.Questions[QuestionIndex.Value] : null;
     public Timer QuestionTimer = new(1000);
@@ -60,9 +61,8 @@ public class CircuitTracker : BackgroundService
                 }
                 case CircuitClosed circuitClosed:
                 {
-                    if (Circuits.TryGetValue(circuitClosed.CircuitId, out var circuit))
+                    if (Circuits.TryRemove(circuitClosed.CircuitId, out _))
                     {
-                        Circuits.Remove(circuit.CircuitId);
                         OnHostChange?.Invoke();
                     }
                     break;
@@ -99,7 +99,7 @@ public class CircuitTracker : BackgroundService
 
                         while (Reactions.Count > 20)
                         {
-                            Reactions.Dequeue();
+                            Reactions.TryDequeue(out _);
                         }
 
                         OnHostChange?.Invoke();
@@ -164,7 +164,7 @@ public class CircuitTracker : BackgroundService
                             // https://support.kahoot.com/hc/en-us/articles/115002303908-How-points-work
                             var now = DateTime.UtcNow;
                             var responseTime = now - questionTimeOut.Value.AddSeconds(-20);
-                            var dividedValue = 20 / Math.Max(0.01, responseTime.TotalSeconds);
+                            var dividedValue = responseTime.TotalSeconds / 20;
                             var dividedAgain = dividedValue / 2;
                             var subtracted = 1 - dividedAgain;
                             var multiplied = subtracted * 1000;
@@ -217,8 +217,13 @@ public class CircuitTracker : BackgroundService
         return 0;
     }
 
-    public AnswerInfo? GetAnsweredAnswer(string circuitId)
+    public AnswerInfo? GetAnsweredAnswer(string? circuitId)
     {
+        if (string.IsNullOrWhiteSpace(circuitId))
+        {
+            return null;
+        }
+
         if (Circuits.TryGetValue(circuitId, out var circuitInfo) && circuitInfo.LastQuestionAnswered == QuestionIndex)
         {
             return circuitInfo.LastAnswer;
