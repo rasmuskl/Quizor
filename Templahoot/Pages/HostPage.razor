@@ -8,8 +8,12 @@
     <img src="/images/qr-code.svg"/>
 </div>
 
-<div class="grid grid-flow-row-dense grid-cols-4 gap-8">
-    <div class="col-span-1 flex flex-col gap-6">
+@{
+    var blur = !CircuitTracker.QuestionReveal ? "blur-md" : "";
+}
+
+<div class="grid grid-flow-row-dense grid-cols-5 gap-8">
+    <div class=@($"col-span-1 flex flex-col gap-6 {blur}")>
         <div class="flex flex-col gap-1 rounded-md border border-slate-500 p-4">
             <h3 class="text-xl text-slate-300">Leaderboard</h3>
             @foreach (var (_, circuit) in CircuitTracker.Circuits.ToArray().OrderByDescending(x => x.Value.Points))
@@ -17,16 +21,8 @@
                 <div class="text-lg text-slate-200">@circuit.Name @(CircuitTracker.QuestionReveal ? @$"- {circuit.Points}" : "")</div>
             }
         </div>
-
-        <div class="flex flex-col gap-1 rounded-md border border-slate-500 p-4">
-            <h3 class="text-xl text-slate-300">Reactions</h3>
-            @foreach (var reaction in CircuitTracker.Reactions.ToArray())
-            {
-                <div class="text-lg text-slate-200">@reaction.Name: <img src="@GetImage(reaction.Type)"/></div>
-            }
-        </div>
-        
     </div>
+
     <div class="col-span-3 flex flex-col gap-4">
 
         @if (CircuitTracker.CurrentQuestion is null)
@@ -55,6 +51,18 @@
                 <button class="bg-slate-300 p-2 rounded-md text-slate-800 text-lg hover:bg-slate-200 active:bg-slate-400" @onclick="OnNextQuestion">Next question</button>
             }
         }
+
+
+    </div>
+
+    <div class="col-span-1 flex flex-col gap-6">
+        <div class="flex flex-col gap-1 rounded-md border border-slate-500 p-4">
+            <h3 class="text-xl text-slate-300">Reactions</h3>
+            @foreach (var reaction in CircuitTracker.Reactions.ToArray())
+            {
+                <div class="text-lg text-slate-200">@reaction.Name: <img src="@GetImage(reaction.Type)"/></div>
+            }
+        </div>
     </div>
 
     @code {
