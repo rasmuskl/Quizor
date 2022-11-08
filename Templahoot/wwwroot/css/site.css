@@ -2,6 +2,10 @@ a, .btn-link {
     color: #0071c1;
 }
 
+pre {
+    overflow-x: auto;
+}
+
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
