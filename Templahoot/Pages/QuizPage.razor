@@ -5,128 +5,142 @@
 @inject QuizInfo Quiz
 @implements IDisposable
 
-<h1>Templa-hoot!</h1>
+<div class="flex flex-col gap-4">
 
-@if (!AttendeeService.IsNameSet)
-{
-    <div>
-        Enter your name:
-        <input type="text" class="bg-gray-800" @bind-value="@ProposedName" @onkeyup="OnKeyUp" />
-        <button @onclick="OnSetNameClick">Set</button>
-    </div>
-}
+    @if (!AttendeeService.IsNameSet)
+    {
+        <div class="flex flex-col gap-2">
+            <label for="name">Enter your name:</label>
+            <input id="name" type="text" class="bg-slate-700 border-2 border-slate-900 px-4 py-1 rounded-sm" @bind-value="@ProposedName" @onkeyup="OnKeyUp"/>
+            <button class="bg-slate-300 p-2 rounded-lg text-slate-800 text-lg hover:bg-slate-200 active:bg-slate-400" @onclick="OnSetNameClick">Set</button>
+        </div>
+    }
 
-@if (CurrentQuestion is not null)
-{
-    var answeredAnswer = CircuitTracker.GetAnsweredAnswer(AttendeeService.CircuitId);
+    @if (CurrentQuestion is not null)
+    {
+        var answeredAnswer = CircuitTracker.GetAnsweredAnswer(AttendeeService.CircuitId);
 
-    <div>
-        <h3>@CurrentQuestion.Text</h3>
+        <h3 class="text-2xl text-center text-slate-100">@CurrentQuestion.Text</h3>
 
-        @foreach (var answer in CurrentQuestion.Answers)
-        {
-            var currentAnswer = answer;
+        <ul class="space-4 grid md:grid-cols-2 grid-cols-1 gap-4">
 
-            var extraStyle = "";
-
-            if (CircuitTracker.QuestionTimeOut is null && answer.CorrectAnswer)
+            @foreach (var answer in CurrentQuestion.Answers)
             {
-                extraStyle = "background: #444";
-            }
+                var currentAnswer = answer;
 
-            if (answeredAnswer == answer)
-            {
-                extraStyle = "background: blue";
+                var extraStyle = "";
 
-                if (CircuitTracker.QuestionTimeOut is null)
+                if (CircuitTracker.QuestionTimeOut is null && answer.CorrectAnswer)
                 {
-                    if (answer.CorrectAnswer)
+                    extraStyle = "bg-sky-300 opacity-100 scale-105";
+                }
+
+                if (answeredAnswer == answer)
+                {
+                    extraStyle = "bg-sky-300 text-slate-700 opacity-100 scale-105";
+
+                    if (CircuitTracker.QuestionTimeOut is null)
                     {
-                        extraStyle = "background: green";
-                    }
-                    else
-                    {
-                        extraStyle = "background: red";
+                        if (answer.CorrectAnswer)
+                        {
+                            extraStyle = "bg-green-500 opacity-100 scale-105 border-green-900";
+                        }
+                        else
+                        {
+                            extraStyle = "bg-red-500 opacity-100 border-red-900 scale-100";
+                        }
                     }
                 }
+
+                <li class=@("flex items-center justify-center text-2xl grow bg-sky-500 h-24 border-4 border-sky-900 rounded-2xl opacity-80 hover:opacity-100 hover:scale-105 duration-100 cursor-pointer " + extraStyle) @onclick=@(() => OnAnswerClicked(currentAnswer))>@answer.Text</li>
             }
+        </ul>
+    }
 
-            <div style=@("border: 1px solid #888; padding: 1rem 2rem; text-align: center;" + extraStyle) @onclick=@(() => OnAnswerClicked(currentAnswer))>@answer.Text</div>
-        }
+    <div class="flex flex-row justify-between py-6">
+        <a class="p-2 hover:cursor-pointer hover:bg-slate-200 rounded-lg" @onclick="() => OnReact(ReactionType.Heart)">
+            <img src="/images/heart.png"/>
+        </a>
+        <a class="p-2 hover:cursor-pointer hover:bg-slate-200 rounded-lg" @onclick="() => OnReact(ReactionType.Joy)">
+            <img src="/images/joy.png"/>
+        </a>
+        <a class="p-2 hover:cursor-pointer hover:bg-slate-200 rounded-lg" @onclick="() => OnReact(ReactionType.Explode)">
+            <img src="/images/explode.png"/>
+        </a>
+        <a class="p-2 hover:cursor-pointer hover:bg-slate-200 rounded-lg" @onclick="() => OnReact(ReactionType.Think)">
+            <img src="/images/think.png"/>
+        </a>
+        <a class="p-2 hover:cursor-pointer hover:bg-slate-200 rounded-lg" @onclick="() => OnReact(ReactionType.Invader)">
+            <img src="/images/invader.png"/>
+        </a>
     </div>
-}
 
-<div style="display: flex; gap: 1rem">
-    <a @onclick="() => OnReact(ReactionType.Heart)"><img src="/images/heart.png" /></a>
-    <a @onclick="() => OnReact(ReactionType.Joy)"><img src="/images/joy.png" /></a>
-    <a @onclick="() => OnReact(ReactionType.Explode)"><img src="/images/explode.png" /></a>
-    <a @onclick="() => OnReact(ReactionType.Think)"><img src="/images/think.png" /></a>
-    <a @onclick="() => OnReact(ReactionType.Invader)"><img src="/images/invader.png" /></a>
-</div>
-
-@if (CircuitTracker.QuestionTimeOut is null)
-{
-    <p>You have @CircuitTracker.GetPoints(AttendeeService.CircuitId) points.</p>
-}
-
-<p>Attending as @AttendeeService.Name</p>
-
-@code {
-    private string ProposedName { get; set; }
-    private QuestionInfo? CurrentQuestion => CircuitTracker.CurrentQuestion;
-
-    private async Task OnReact(ReactionType reactionType)
+    @if (CircuitTracker.QuestionTimeOut is null)
     {
-        await CircuitTracker.PostCommand(new CircuitReact(AttendeeService.CircuitId, reactionType));
+        <p class="text-2xl text-center text-slate-100">You have @CircuitTracker.GetPoints(AttendeeService.CircuitId) points.</p>
     }
 
-    protected override void OnInitialized()
-    {
-        CircuitTracker.OnClientChange += OnClientChange;
-    }
+    <p class="text-lg text-center text-slate-300">Attending as @AttendeeService.Name</p>
 
-    private async Task OnClientChange(string? circuitId)
-    {
-        if (circuitId == null || circuitId == AttendeeService.CircuitId)
+    @code {
+        private string ProposedName { get; set; }
+        private QuestionInfo? CurrentQuestion => CircuitTracker.CurrentQuestion;
+
+        private async Task OnReact(ReactionType reactionType)
         {
-            await InvokeAsync(StateHasChanged);
+            await CircuitTracker.PostCommand(new CircuitReact(AttendeeService.CircuitId, reactionType));
         }
-    }
 
-    public void Dispose()
-    {
-        CircuitTracker.OnClientChange -= OnClientChange;
-    }
+        protected override void OnInitialized()
+        {
+            CircuitTracker.OnClientChange += OnClientChange;
+        }
 
-    private async Task OnAnswerClicked(AnswerInfo answer)
-    {
-        await CircuitTracker.PostCommand(new AnswerSubmitted(AttendeeService.CircuitId, answer));
-    }
+        private async Task OnClientChange(string? circuitId)
+        {
+            if (circuitId == null || circuitId == AttendeeService.CircuitId)
+            {
+                await InvokeAsync(StateHasChanged);
+            }
+        }
 
-    private async Task OnKeyUp(KeyboardEventArgs arg)
-    {
-        if (arg.Key == "Enter")
+        public void Dispose()
+        {
+            CircuitTracker.OnClientChange -= OnClientChange;
+        }
+
+        private async Task OnAnswerClicked(AnswerInfo answer)
+        {
+            await CircuitTracker.PostCommand(new AnswerSubmitted(AttendeeService.CircuitId, answer));
+        }
+
+        private async Task OnKeyUp(KeyboardEventArgs arg)
+        {
+            if (arg.Key == "Enter")
+            {
+                await SetName(ProposedName);
+            }
+        }
+
+        private async Task OnSetNameClick()
         {
             await SetName(ProposedName);
         }
-    }
 
-    private async Task OnSetNameClick()
-    {
-        await SetName(ProposedName);
-    }
-
-    private async Task SetName(string? proposedName)
-    {
-        proposedName = proposedName?.Trim() ?? "";
-
-        if (proposedName.Length < 3)
+        private async Task SetName(string? proposedName)
         {
-            return;
+            proposedName = proposedName?.Trim() ?? "";
+
+            if (proposedName.Length < 3)
+            {
+                return;
+            }
+
+            AttendeeService.Name = proposedName;
+            AttendeeService.IsNameSet = true;
+            await CircuitTracker.PostCommand(new NameSet(AttendeeService.CircuitId, proposedName));
         }
 
-        AttendeeService.Name = proposedName;
-        AttendeeService.IsNameSet = true;
-        await CircuitTracker.PostCommand(new NameSet(AttendeeService.CircuitId, proposedName));
     }
-}
+
+</div>

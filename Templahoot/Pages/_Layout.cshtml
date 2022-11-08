@@ -4,16 +4,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <base href="~/" />
-    <link href="css/site.css" rel="stylesheet" />
-    <link href="Templahoot.styles.css" rel="stylesheet" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <base href="~/"/>
+    <link href="css/site.css" rel="stylesheet"/>
+    <link href="Templahoot.styles.css" rel="stylesheet"/>
     <title>Templa-hoot!</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-@RenderBody()
+
+<div class="font-sans flex min-h-screen flex-col justify-center overflow-hidden bg-slate-900 py-6 sm:py-12 space-y-12 p-2">
+    <h1 class="text-4xl text-slate-200 mx-auto">Templa-hoot!</h1>
+    <div>
+        <div class="p-6 md:p-12 max-w-3xl mx-auto bg-slate-700 text-white rounded-lg">
+            @RenderBody()
+        </div>
+    </div>
+</div>
 
 <div id="blazor-error-ui">
     <environment include="Staging,Production">
