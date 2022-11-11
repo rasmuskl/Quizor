@@ -6,13 +6,15 @@ The current set of questions involve JavaScript quirks and weirdness, inspired b
 
 Questions can be changed in: https://github.com/rasmuskl/Quizor/blob/master/Quizor/Code/QuizInfo.cs
 
+
 ## Screenshots
 
-Host view example:
+### Client / participant phone example
+![Client phone view](images/client-phone-example.png)
+
+### Host view example
 ![Host view](images/host-example.png)
 
-Client / participant phone example:
-![Client phone view](images/client-phone-example.png)
 
 ## Background
 
@@ -21,6 +23,7 @@ Quizor was developed as an experiment at an internal company conference to see i
 Development started 24 hours before a 50 partipant quiz was run without any issues. To minimize the risk of overloading it was run on a P3V3 Azure App Service instance (8 vCPU, 32 GB memory) but CPU utilization averaged about 1% during the quiz, so much less should suffice.
 
 Given that the code was written in about 8 hours of development time for 2 people over a 24 hour period, the code is optimized for speed of development / demoability over any sort of quality and maintainance.
+
 
 ## Important technology and design choices
 
