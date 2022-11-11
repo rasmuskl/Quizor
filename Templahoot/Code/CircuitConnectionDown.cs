@@ -1,3 +1,3 @@
-namespace Templahoot.Code;
+namespace Quizor.Code;
 
 public record CircuitConnectionDown(string CircuitId) : CircuitCommand;

@@ -1,39 +1,7 @@
-﻿namespace Templahoot.Code;
+﻿namespace Quizor.Code;
 
 public class QuizInfo
 {
-    public QuestionInfo[] Questions3 { get;  } = new[]
-    {
-        new QuestionInfo("What is the result?<br/><pre>this is some random code that is long</pre>", new AnswerInfo[]
-        {
-            new("1"),
-            new("2"),
-            new("3"),
-            new("4", true),
-        }),
-        new QuestionInfo("What is 2 + 2?", new AnswerInfo[]
-        {
-            new("1"),
-            new("2"),
-            new("3"),
-            new("4", true),
-        }),
-        new QuestionInfo("What is the fastest animal?", new AnswerInfo[]
-        {
-            new("Cheetah"),
-            new("Oviraptor"),
-            new("Elephant"),
-            new("Snail", true),
-        }),
-        new QuestionInfo("What is 2 / 2?", new AnswerInfo[]
-        {
-            new("1", true),
-            new("2"),
-            new("3"),
-            new("4"),
-        }),
-    };
-
     public QuestionInfo[] Questions { get; } = new[]
     {
         new QuestionInfo("What is the result?<br/><pre>2 + 2</pre>", new AnswerInfo[]

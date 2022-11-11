@@ -1,6 +1,4 @@
-﻿using Templahoot.Code;
-
-namespace Templahoot.Shared;
+﻿namespace Quizor.Shared;
 
 public class AttendeeService
 {

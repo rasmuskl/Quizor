@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Server.Circuits;
-using Templahoot.Shared;
+using Quizor.Shared;
 
-namespace Templahoot.Code;
+namespace Quizor.Code;
 
 public class TrackingCircuitHandler : CircuitHandler
 {

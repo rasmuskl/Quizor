@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Components.Server.Circuits;
-using Templahoot.Code;
-using Templahoot.Shared;
+using Quizor.Code;
+using Quizor.Shared;
 
-namespace Templahoot;
+namespace Quizor;
 
 public class Program
 {

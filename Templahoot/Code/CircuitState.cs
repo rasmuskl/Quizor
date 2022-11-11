@@ -1,4 +1,4 @@
-namespace Templahoot.Code;
+namespace Quizor.Code;
 
 public enum CircuitState
 {

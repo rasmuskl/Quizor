@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Threading.Channels;
 using Timer = System.Timers.Timer;
 
-namespace Templahoot.Code;
+namespace Quizor.Code;
 
 public class CircuitTracker : BackgroundService
 {

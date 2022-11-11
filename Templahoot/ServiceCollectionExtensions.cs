@@ -1,4 +1,4 @@
-namespace Templahoot;
+namespace Quizor;
 
 public static class ServiceCollectionExtensions
 {
