@@ -7,7 +7,7 @@
 
 <div class="flex flex-col gap-4">
 
-    @if (AttendeeService.Name is null)
+    @if (!AttendeeService.IsNameSet)
     {
         <div class="flex flex-col gap-2">
             <label for="name">Enter your name:</label>
@@ -159,6 +159,7 @@
             }
 
             AttendeeService.Name = proposedName;
+            AttendeeService.IsNameSet = true;
             await CircuitTracker.PostCommand(new NameSet(AttendeeService.CircuitId, proposedName));
         }
 
