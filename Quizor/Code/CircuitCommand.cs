@@ -1,3 +1,3 @@
 namespace Quizor.Code;
 
-public record CircuitCommand();
+public record CircuitCommand;

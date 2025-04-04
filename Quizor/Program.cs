@@ -4,7 +4,7 @@ using Quizor.Shared;
 
 namespace Quizor;
 
-public class Program
+public static class Program
 {
     public static void Main(string[] args)
     {

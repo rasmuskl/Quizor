@@ -9,11 +9,11 @@ public class CircuitTracker : BackgroundService
     private readonly Channel<CircuitCommand> _commandChannel = Channel.CreateUnbounded<CircuitCommand>();
     private readonly QuizInfo _quiz;
 
-    public ConcurrentDictionary<string, CircuitInfo> Circuits = new();
-    public ConcurrentQueue<AttendeeReaction> Reactions = new();
+    public readonly ConcurrentDictionary<string, CircuitInfo> Circuits = new();
+    public readonly ConcurrentQueue<AttendeeReaction> Reactions = new();
     public int? QuestionIndex;
     public QuestionInfo? CurrentQuestion => QuestionIndex.HasValue ? _quiz.Questions[QuestionIndex.Value] : null;
-    public Timer QuestionTimer = new(1000);
+    private readonly Timer _questionTimer = new(1000);
     public DateTime? QuestionTimeOut;
     public bool QuestionReveal;
 
@@ -22,8 +22,8 @@ public class CircuitTracker : BackgroundService
     public CircuitTracker(QuizInfo quiz)
     {
         _quiz = quiz;
-        QuestionTimer.AutoReset = true;
-        QuestionTimer.Elapsed += (o, e) => OnTimerElapsed().Wait();
+        _questionTimer.AutoReset = true;
+        _questionTimer.Elapsed += (_, _) => OnTimerElapsed().Wait();
     }
 
     private async Task OnTimerElapsed()
@@ -134,7 +134,7 @@ public class CircuitTracker : BackgroundService
                 case QuestionTimerElapsed:
                 {
                     QuestionTimeOut = null;
-                    QuestionTimer.Stop();
+                    _questionTimer.Stop();
                     QuestionReveal = true;
                     OnClientChange?.Invoke(null);
                     OnHostChange?.Invoke();
@@ -196,7 +196,7 @@ public class CircuitTracker : BackgroundService
     {
         QuestionReveal = false;
         QuestionIndex = Math.Clamp(0, index, _quiz.Questions.Length - 1);
-        QuestionTimer.Start();
+        _questionTimer.Start();
         QuestionTimeOut = DateTime.UtcNow.AddSeconds(20);
     }
 
@@ -239,10 +239,10 @@ public class CircuitTracker : BackgroundService
     }
 }
 
-public record StartQuiz() : CircuitCommand;
-public record NextQuestion() : CircuitCommand;
-public record TimerElapsed() : CircuitCommand;
-public record QuestionTimerElapsed() : CircuitCommand;
+public record StartQuiz : CircuitCommand;
+public record NextQuestion : CircuitCommand;
+public record TimerElapsed : CircuitCommand;
+public record QuestionTimerElapsed : CircuitCommand;
 public record AnswerSubmitted(string CircuitId, AnswerInfo Answer) : CircuitCommand;
 public record NameSet(string CircuitId, string Name) : CircuitCommand;
 
