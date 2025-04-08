@@ -11,97 +11,89 @@ public class QuizInfo
             new AnswerInfo("SyntaxError")
         ], true),
 
-        new("What is the result?<br/><pre>1 + 2 + \"3\"</pre>", [
-            new AnswerInfo("\"123\""),
-            new AnswerInfo("\"33\"", true),
-            new AnswerInfo("NaN"),
+        new("How many l's in lollipop?", [
+            new AnswerInfo("2"),
+            new AnswerInfo("3", true),
+            new AnswerInfo("4"),
+            new AnswerInfo("5")
+        ]),
+        
+        new("What are the release channel order for VSTO add-ins?", [
+            new AnswerInfo("Staging-Preview-Production"),
+            new AnswerInfo("Insider-Internal-Stable"),
+            new AnswerInfo("Internal-Preview-Stable"),
+            new AnswerInfo("Internal-Insider-Stable", true)
+        ]),
+
+        new("Which of these is NOT the name of a Templafy custom beer?", [
+            new AnswerInfo("Macrobrew", true),
+            new AnswerInfo("PowerPint"),
+            new AnswerInfo("Final Draft"),
+            new AnswerInfo("Anarchy Hopped")
+        ]),
+
+        new("What is the JavaScript result?<br/><pre>undefined + false</pre>", [
+            new AnswerInfo("false"),
+            new AnswerInfo("\"0\""),
+            new AnswerInfo("NaN", true),
+            new AnswerInfo("SyntaxError")
+        ]),
+
+        new("What is the hardest thing to roll out in Templafy?", [
+            new AnswerInfo("Web add-ins manifests"),
+            new AnswerInfo("Templafy Desktop Host", true),
+            new AnswerInfo("VSTO add-ins 6.x offline mode"),
+            new AnswerInfo("Templafy One")
+        ]),
+
+        new("Which iteration of Ignite is Ignite 2025?", [
+            new AnswerInfo("3"),
+            new AnswerInfo("4"),
+            new AnswerInfo("5", true),
             new AnswerInfo("6")
         ]),
 
-        new("What is the result?<br/><pre>5 && 3</pre>", [
-            new AnswerInfo("true"),
-            new AnswerInfo("5"),
-            new AnswerInfo("SyntaxError"),
-            new AnswerInfo("3", true)
+        new("How did we improve narrative extraction in Conversational AI last week?", [
+            new AnswerInfo("Offer money"),
+            new AnswerInfo("More specific instructions"),
+            new AnswerInfo("Split task in 2 prompts"),
+            new AnswerInfo("Threaten with jail", true),
         ]),
 
-        new("What is the result?<br/><pre>42.toString()</pre>", [
-            new AnswerInfo("\"42\""),
-            new AnswerInfo("\"41.99999999999\""),
-            new AnswerInfo("SyntaxError", true),
-            new AnswerInfo("[object Object]")
+        new("What was the worst incident in Templafy history?", [
+            new AnswerInfo("Templafy Desktop timeout retry DDoS"),
+            new AnswerInfo("Manual UPDATE without WHERE"),
+            new AnswerInfo("App Service scaling IP change"),
+            new AnswerInfo("Deprecated Timestamp Server", true),
         ]),
 
-        new("What is the result?<br/><pre>010 - 01</pre>", [
-            new AnswerInfo("1"),
-            new AnswerInfo("9"),
-            new AnswerInfo("7", true),
-            new AnswerInfo("NaN")
+        new("Who has won most Ignite hackathon awards in total?", [
+            new AnswerInfo("Tiago"),
+            new AnswerInfo("Ibrahim", true),
+            new AnswerInfo("Jacob"),
+            new AnswerInfo("Mehmet")
         ]),
 
-        new("What is the result?<br/><pre>[,,,,].length</pre>", [
-            new AnswerInfo("4"),
-            new AnswerInfo("SyntaxError"),
-            new AnswerInfo("0"),
-            new AnswerInfo("3", true)
+        new("What is the JavaScript result?<br/><pre>`${parseInt(0.2)}, ${parseInt(0.0000002)}`</pre>", [
+            new AnswerInfo("\"0, 0\""),
+            new AnswerInfo("\"2, 0\""),
+            new AnswerInfo("\"0, 2\"", true),
+            new AnswerInfo("\"2, 2\"")
         ]),
 
-        new("What is the result?<br/><pre>[3, 2, 1] + [4, 5, 6]</pre>", [
-            new AnswerInfo("[3, 2, 1, 4, 5, 6]"),
-            new AnswerInfo("\"3,2,14,5,6\"", true),
-            new AnswerInfo("SyntaxError"),
-            new AnswerInfo("0")
+        new("Which virtual meeting room would you use for gnarly issues before Hive?", [
+            new AnswerInfo("Narnia"),
+            new AnswerInfo("Chamber of Secrets"),
+            new AnswerInfo("Mordor", true),
+            new AnswerInfo("The Bat Cave"),
         ]),
 
-        new("What is the result?<br/><pre>new Date(2022, 5, 31).toDateString()</pre>", [
-            new AnswerInfo("\"Thu Jun 31 2022\""),
-            new AnswerInfo("\"Invalid date\""),
-            new AnswerInfo("\"Fri Jul 01 2022\"", true),
-            new AnswerInfo("\"Tue May 31 2022\"")
+        new("At Templafy Ignite, an AI decides to invent a new office mascot. What does it name the mascot?", [
+            new AnswerInfo("Contentron Prime"),
+            new AnswerInfo("Sir Merge-a-Lot"),
+            new AnswerInfo("DocuDuke 3000"),
+            new AnswerInfo("Slidey McTemplateface", true),
         ]),
-
-        new("What is the result?<br/><pre>{} + []</pre>", [
-            new AnswerInfo("0", true),
-            new AnswerInfo("NaN"),
-            new AnswerInfo("SyntaxError"),
-            new AnswerInfo("\"[object Object]\"")
-        ]),
-
-        //new QuestionInfo("What is the result?<br/><pre>[] + {}</pre>", new AnswerInfo[]
-        //{
-        //    new("0"),
-        //    new("NaN"),
-        //    new("SyntaxError"),
-        //    new("\"[object Object]\"", true),
-        //}),
-
-        new("What is the result?<br/><pre>{} - []</pre>", [
-            new AnswerInfo("0"),
-            new AnswerInfo("NaN", true),
-            new AnswerInfo("SyntaxError"),
-            new AnswerInfo("\"[object Object]\"")
-        ]),
-
-        new("What is the result?<br/><pre>&lt;!-- 42</pre>", [
-            new AnswerInfo("undefined", true),
-            new AnswerInfo("42"),
-            new AnswerInfo("SyntaxError"),
-            new AnswerInfo("\"0\"")
-        ]),
-
-        new("What is the result?<br/><pre>{ ignite: 2022 }.ignite</pre>", [
-            new AnswerInfo("2022"),
-            new AnswerInfo("ReferenceError"),
-            new AnswerInfo("SyntaxError", true),
-            new AnswerInfo("undefined")
-        ]),
-
-        new("What is the result?<br/><pre>\"\" - - \"\"</pre>", [
-            new AnswerInfo("0", true),
-            new AnswerInfo("SyntaxError"),
-            new AnswerInfo("\"\""),
-            new AnswerInfo("undefined")
-        ])
     ];
 }
 

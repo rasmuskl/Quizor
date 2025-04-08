@@ -7,4 +7,8 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="PinguApps.Blazor.QRCode" Version="1.1.3" />
+  </ItemGroup>
+
 </Project>

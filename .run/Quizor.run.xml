@@ -1,0 +1,14 @@
+﻿<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Quizor" type="AzureWebAppDeploy">
+    <option name="appServicePlanName" value="templafyquizor" />
+    <option name="appServicePlanResourceGroupName" value="templayquizor_group" />
+    <option name="operatingSystem" value="Windows" />
+    <option name="pricingSize" value="S1" />
+    <option name="pricingTier" value="Standard" />
+    <option name="region" value="westeurope" />
+    <option name="resourceGroupName" value="templayquizor_group" />
+    <option name="subscriptionId" value="7d69926c-c305-477e-bbb8-ee56ae05d653" />
+    <option name="webAppName" value="templayquizor" />
+    <method v="2" />
+  </configuration>
+</component>

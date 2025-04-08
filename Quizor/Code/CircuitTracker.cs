@@ -16,7 +16,8 @@ public class CircuitTracker : BackgroundService
     private readonly Timer _questionTimer = new(1000);
     public DateTime? QuestionTimeOut;
     public bool QuestionReveal;
-
+    public List<QuestionAnswer> LastQuestionAnswers = [];
+    
     public int QuestionMaxIndex => _quiz.Questions.Length - 1;
 
     public CircuitTracker(QuizInfo quiz)
@@ -122,6 +123,7 @@ public class CircuitTracker : BackgroundService
                 case NextQuestion:
                 {
                     ShowQuestion(QuestionIndex.GetValueOrDefault() + 1);
+                    LastQuestionAnswers = [];
                     OnClientChange?.Invoke(null);
                     OnHostChange?.Invoke();
                     break;
@@ -163,6 +165,8 @@ public class CircuitTracker : BackgroundService
                         {
                             break;
                         }
+                        
+                        LastQuestionAnswers.Add(new QuestionAnswer(answerSubmitted.CircuitId, circuitInfo.Name, answerSubmitted.Answer));
 
                         var points = 0;
                         if (answerSubmitted.Answer.CorrectAnswer && CurrentQuestion?.NoPoints != true)
@@ -185,6 +189,7 @@ public class CircuitTracker : BackgroundService
                         };
 
                         OnClientChange?.Invoke(answerSubmitted.CircuitId);
+                        OnHostChange?.Invoke();
                     }
                     break;
                 }
@@ -246,6 +251,7 @@ public record QuestionTimerElapsed : CircuitCommand;
 public record AnswerSubmitted(string CircuitId, AnswerInfo Answer) : CircuitCommand;
 public record NameSet(string CircuitId, string Name) : CircuitCommand;
 
+public record QuestionAnswer(string CircuitId, string Name, AnswerInfo Answer);
 
 public record AttendeeReaction(string Name, ReactionType Type);
 

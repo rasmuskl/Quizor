@@ -1,58 +1,87 @@
-﻿@page "/host/ao92ihugucycfrydue3pdlgpbulbktd5dnc2qrqbec4sx0b1xtqcy9o2tdfyclrim53o17xew5d0aeuxycs30tz27dgew39ljlgdz6hy8ksmgcwdizw4hpa8vcc6aitbzw5fsqiwkrdworl5n7hcby0w59a7nyue"
+﻿@page "/host/ao92ihugucycfrydue3pdlgpbulbktd5dnc2qrqbec4sx0b1xtqcy9o2tdfyclrim53o17xew5d0aeuxycs30tz27dgew39ljlgdz6hy8ksmgcwdizw4hpa8vcc6aitbzw5fsqiwkrdworl5n7hcby0w59a7nyuedfyclrim53o17xew5d0aeuxycs30tz27dgew39ljlgdz6hy8ksmgcwdizw4hpa8vcc6aitbzw5fsqiwkrdworl5n7hcby0w59a7nyue"
 @inject CircuitTracker CircuitTracker
 @using Quizor.Code
+@using PinguApps.Blazor.QRCode
+@inject NavigationManager Navigation
 @implements IDisposable
 
 <div class="fixed bottom-4 left-4 w-32">
     <p class="text-md text-slate-300">Join</p>
-    <img src="/images/qr-code.svg" alt="QR Code"/>
+    <QRCode Data="@Navigation.BaseUri" />
 </div>
 
 @{
-    var blur = !CircuitTracker.QuestionReveal && CircuitTracker.CurrentQuestion is not null ? "blur-md" : "";
+    var showLeaderboard = CircuitTracker.QuestionReveal || CircuitTracker.CurrentQuestion is null;
 }
 
 <div class="grid grid-flow-row-dense grid-cols-7 gap-8">
-<div class=@($"col-span-2 flex flex-col gap-6 {blur}")>
-    <div class="flex flex-col gap-1 rounded-md border border-slate-500 p-4 h-96">
-        <h3 class="text-xl text-slate-300 text-center">Leaderboard</h3>
-        @foreach (var (_, circuit) in CircuitTracker.Circuits.ToArray().OrderByDescending(x => x.Value.Points).Take(10))
-        {
-            <div class="text-md text-slate-200 text-ellipsis overflow-hidden whitespace-nowrap">@($"{circuit.Points}p - {circuit.Name}")</div>
-        }
-    </div>
-</div>
-
-<div class="col-span-3 flex flex-col gap-4">
-
-    @if (CircuitTracker.CurrentQuestion is null)
-    {
-        <h2 class="font-mono text-xl text-center text-slate-200 bg-slate-900 rounded-md p-4">No quiz active.</h2>
-        <button class="bg-slate-300 p-2 rounded-md text-slate-800 text-lg hover:bg-slate-200 active:bg-slate-400" @onclick="OnStartQuiz">Start quiz</button>
-    }
-    else
-    {
-        <h3 class="font-mono text-md text-center text-slate-200 bg-slate-900 rounded-md p-4">@((MarkupString) CircuitTracker.CurrentQuestion.Text)</h3>
-        <ul class="space-4 grid md:grid-cols-2 grid-cols-1 gap-4">
-            @foreach (var answer in CircuitTracker.CurrentQuestion.Answers)
+    
+    <div class="col-span-2 flex flex-col gap-6">
+        <div class="flex flex-col gap-1 rounded-md border border-slate-500 p-4 overflow-hidden h-96">
+            @if (showLeaderboard)
             {
-                var extraStyle = CircuitTracker.QuestionReveal && answer.CorrectAnswer ? "bg-green-500 opacity-100 scale-105 border-green-900" : "";
-                <li class=@("flex items-center justify-center text-lg grow bg-sky-500 h-24 border-4 border-sky-900 rounded-2xl opacity-80 hover:opacity-100 hover:scale-105 duration-100 cursor-pointer " + extraStyle)>@answer.Text</li>
+                <h3 class="text-xl text-slate-300 text-center">Leaderboard</h3>
+                @foreach (var (_, circuit) in CircuitTracker.Circuits.ToArray().OrderByDescending(x => x.Value.Points).Take(10))
+                {
+                    <div class="text-md text-slate-200 text-ellipsis overflow-hidden whitespace-nowrap">
+                        @($"{circuit.Points}p - {circuit.Name}")
+                    </div>
+                }
             }
-        </ul>
+            else
+            {
+                <h3 class="text-xl text-slate-300 text-center">Answers</h3>
+                @foreach (var questionAnswer in CircuitTracker.LastQuestionAnswers)
+                {
+                    <div class="text-md text-slate-200 text-ellipsis overflow-hidden whitespace-nowrap">
+                        @questionAnswer.Name
+                    </div>
+                }    
+            }
+        </div>
+    </div>
 
-        @if (CircuitTracker.QuestionTimeOut.HasValue)
+    <div class="col-span-3 flex flex-col gap-4">
+
+        @if (CircuitTracker.CurrentQuestion is null)
         {
-            <div class="flex items-center justify-center">
-                <span class="absolute animate-ping rounded-full bg-rose-300 w-12 h-12"></span>
-                <p class="relative text-center text-6xl text-slate-200">@Math.Round((CircuitTracker.QuestionTimeOut - DateTime.UtcNow).Value.TotalSeconds)</p>
-            </div>
+            <h2 class="font-mono text-xl text-center text-slate-200 bg-slate-900 rounded-md p-4">No quiz active.</h2>
+            <button class="bg-slate-300 p-2 rounded-md text-slate-800 text-lg hover:bg-slate-200 active:bg-slate-400"
+                    @onclick="OnStartQuiz">Start quiz
+            </button>
         }
-        else if (CircuitTracker.QuestionIndex < CircuitTracker.QuestionMaxIndex)
+        else
         {
-            <button class="bg-slate-300 p-2 rounded-md text-slate-800 text-lg hover:bg-slate-200 active:bg-slate-400" @onclick="OnNextQuestion">Next question</button>
+            <h3 class="font-mono text-md text-center text-slate-200 bg-slate-900 rounded-md p-4">@((MarkupString)CircuitTracker.CurrentQuestion.Text)</h3>
+            <ul class="space-4 grid md:grid-cols-2 grid-cols-1 gap-4">
+                @foreach (var answer in CircuitTracker.CurrentQuestion.Answers)
+                {
+                    var extraStyle = CircuitTracker.QuestionReveal && answer.CorrectAnswer ? "bg-green-500 opacity-100 scale-105 border-green-900" : "";
+                    <li class=@("relative flex items-center justify-center gap-2 text-lg grow bg-sky-500 h-24 border-4 border-sky-900 rounded-2xl opacity-80 hover:opacity-100 hover:scale-105 duration-100 cursor-pointer " + extraStyle)>
+                        <span>@answer.Text</span>
+                        @if (CircuitTracker.QuestionReveal)
+                        {
+                            <div class="flex items-center justify-center rounded-full w-10 h-10 bg-indigo-800 absolute -top-2 -right-2 border"><span>@CircuitTracker.LastQuestionAnswers.Count(x => x.Answer == answer)</span></div>
+                        }
+                    </li>
+                }
+            </ul>
+
+            @if (CircuitTracker.QuestionTimeOut.HasValue)
+            {
+                <div class="flex items-center justify-center">
+                    <span class="absolute animate-ping rounded-full bg-rose-300 w-12 h-12"></span>
+                    <p class="relative text-center text-6xl text-slate-200">@Math.Round((CircuitTracker.QuestionTimeOut - DateTime.UtcNow).Value.TotalSeconds)</p>
+                </div>
+            }
+            else if (CircuitTracker.QuestionIndex < CircuitTracker.QuestionMaxIndex)
+            {
+                <button
+                    class="bg-slate-300 p-2 rounded-md text-slate-800 text-lg hover:bg-slate-200 active:bg-slate-400"
+                    @onclick="OnNextQuestion">Next question
+                </button>
+            }
         }
-    }
 
     </div>
 
@@ -95,7 +124,6 @@
         {
             await CircuitTracker.PostCommand(new NextQuestion());
         }
-
 
         private string GetImage(ReactionType reactionType)
         {
